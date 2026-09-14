@@ -2,6 +2,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --sky-top:#0a0e26;
@@ -1373,7 +1375,7 @@
 
   function renderLb(){
     lbList.innerHTML = '';
-    if(!db){ var u=document.createElement('li'); u.className='lb-unavail'; u.textContent='The leaderboard needs the published game link to load.'; lbList.appendChild(u); return; }
+    if(!db){ var u=document.createElement('li'); u.className='lb-unavail'; u.textContent='Leaderboard is temporarily unavailable — check back soon.'; lbList.appendChild(u); return; }
     if(top10.length===0){ var e=document.createElement('li'); e.className='lb-empty'; e.textContent='No scores yet — be the first on the board.'; lbList.appendChild(e); return; }
     top10.forEach(function(entry,i){
       var li=document.createElement('li'); li.className='lb-row'; li.setAttribute('data-rank',String(i+1));
@@ -1388,8 +1390,19 @@
     if(!db) return Promise.reject(new Error('no db'));
     return db.collection('leaderboard').add({ name:name, score:score, createdAt: Date.now() });
   }
-  async function initDb(){
-    try{ db = await claude.use('db'); }catch(e){ db = null; }
+  function initDb(){
+    try{
+      var firebaseConfig = {
+        apiKey: "AIzaSyAp01EsYeb1EVzZ_eBL2UH6tLGdMG4vTig",
+        authDomain: "thayagames.firebaseapp.com",
+        projectId: "thayagames",
+        storageBucket: "thayagames.firebasestorage.app",
+        messagingSenderId: "460497963916",
+        appId: "1:460497963916:web:e5dd4a60f02e1a52cea4a9"
+      };
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    }catch(e){ db = null; }
     if(!db){ renderLb(); return; }
     db.collection('leaderboard').orderBy('score','desc').limit(10).onSnapshot(function(snap){
       top10 = snap.docs.map(function(d){ var v=d.data()||{}; return { name:v.name, score:v.score||0 }; });
