@@ -175,6 +175,41 @@
   .intro-play{ font-size:16px; padding:13px 30px; box-shadow:0 10px 30px -8px rgba(244,180,0,.6); }
   @media (prefers-reduced-motion:reduce){ .intro-wordmark{ animation:none; } }
 
+  .dialogue-box.hide{ display:none; }
+  .dialogue-speaker{
+    font-family:'Anton',sans-serif; font-size:14px; letter-spacing:1.5px; margin-bottom:8px;
+  }
+  .dialogue-speaker.bear{ color:#c79a63; }
+  .dialogue-speaker.bee{ color:#f5c22c; }
+  .dialogue-text{ color:var(--paper); font-size:14.5px; line-height:1.55; min-height:58px; margin:0 0 14px; }
+  .dialogue-next{ font-size:13px; padding:9px 20px; }
+  .intro-cta{ display:none; }
+  .intro-cta.show{ display:block; animation:ctaIn .4s ease; }
+  @keyframes ctaIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+
+  .welcome-splash{
+    position:absolute; inset:0; z-index:7; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg,#12160e,#1c2414); text-align:center;
+    opacity:1; transition:opacity .6s ease;
+  }
+  .welcome-splash.hide{ opacity:0; pointer-events:none; }
+  .welcome-title{ font-size:clamp(13px,3vw,16px); letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
+  .welcome-brand{
+    font-family:'Anton',sans-serif; font-size:clamp(28px,7vw,46px); color:var(--gold);
+    letter-spacing:2px; text-shadow:0 4px 22px rgba(244,180,0,.4);
+    animation:welcomeIn .6s ease;
+  }
+  @keyframes welcomeIn{ from{ opacity:0; transform:scale(.85);} to{ opacity:1; transform:scale(1);} }
+
+  .dialogue-box{
+    background:rgba(18,22,15,.88); border:1px solid rgba(255,255,255,.12); border-radius:16px;
+    padding:18px; max-width:420px; margin:0 auto; opacity:1; transition:opacity .35s ease;
+    display:flex; align-items:flex-start; gap:14px; text-align:left;
+  }
+  .dialogue-portrait{ flex:none; width:64px; height:64px; }
+  .portrait-icon{ width:100%; height:100%; display:none; }
+  .dialogue-content{ flex:1; min-width:0; }
+
   .status{
     min-height:20px; text-align:center; margin:14px 0 0; font-size:14px; color:var(--muted); font-weight:600;
   }
@@ -275,11 +310,57 @@
     </div>
     <div class="timer-wrap"><div class="timer-bar" id="timerBar"></div></div>
 
+    <div class="welcome-splash" id="welcomeSplash">
+      <div class="welcome-inner">
+        <div class="welcome-title">Welcome to</div>
+        <div class="welcome-brand">THAYA GAMES</div>
+      </div>
+    </div>
+
     <div class="intro-overlay" id="introOverlay">
       <div class="intro-inner">
-        <div class="intro-wordmark">GOLDEN SPOT</div>
-        <p class="intro-sub">One shooter. One keeper who never stands still. Three seconds to decide.</p>
-        <button class="btn btn-primary intro-play" id="introPlayBtn" type="button">▶ Play</button>
+        <div class="dialogue-box" id="dialogueBox">
+          <div class="dialogue-portrait" id="dialoguePortrait">
+            <svg viewBox="0 0 100 100" class="portrait-icon" id="portraitBear">
+              <circle cx="26" cy="28" r="13" fill="#7a4f2f"/>
+              <circle cx="74" cy="28" r="13" fill="#7a4f2f"/>
+              <circle cx="26" cy="28" r="7" fill="#5c3a22"/>
+              <circle cx="74" cy="28" r="7" fill="#5c3a22"/>
+              <circle cx="50" cy="52" r="36" fill="#7a4f2f"/>
+              <ellipse cx="50" cy="62" rx="17" ry="14" fill="#c79a63"/>
+              <circle cx="50" cy="68" r="4.5" fill="#201712"/>
+              <circle cx="38" cy="47" r="4" fill="#201712"/>
+              <circle cx="62" cy="47" r="4" fill="#201712"/>
+            </svg>
+            <svg viewBox="0 0 100 100" class="portrait-icon" id="portraitBee">
+              <defs><clipPath id="beeClip"><circle cx="50" cy="54" r="35"/></clipPath></defs>
+              <line x1="38" y1="24" x2="29" y2="8" stroke="#171712" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="62" y1="24" x2="71" y2="8" stroke="#171712" stroke-width="3.5" stroke-linecap="round"/>
+              <circle cx="29" cy="8" r="4.5" fill="#171712"/>
+              <circle cx="71" cy="8" r="4.5" fill="#171712"/>
+              <g clip-path="url(#beeClip)">
+                <circle cx="50" cy="54" r="35" fill="#f5c22c"/>
+                <rect x="14" y="34" width="72" height="13" fill="#171712"/>
+                <rect x="14" y="60" width="72" height="13" fill="#171712"/>
+                <rect x="14" y="84" width="72" height="10" fill="#171712"/>
+              </g>
+              <circle cx="37" cy="54" r="10" fill="#171712"/>
+              <circle cx="63" cy="54" r="10" fill="#171712"/>
+              <circle cx="34" cy="51" r="3.2" fill="#fff"/>
+              <circle cx="60" cy="51" r="3.2" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="dialogue-content">
+            <div class="dialogue-speaker" id="dialogueSpeaker">BEAR</div>
+            <p class="dialogue-text" id="dialogueText"></p>
+            <button class="btn btn-ghost dialogue-next" id="dialogueNextBtn" type="button">Next ▸</button>
+          </div>
+        </div>
+        <div class="intro-cta" id="introCta">
+          <div class="intro-wordmark">GOLDEN SPOT</div>
+          <p class="intro-sub">One bear. One bee. A jar of honey on the line. Three seconds to decide.</p>
+          <button class="btn btn-primary intro-play" id="introPlayBtn" type="button">▶ Play</button>
+        </div>
       </div>
     </div>
   </div>
@@ -365,6 +446,14 @@
   var muteBtn = document.getElementById('muteBtn');
   var introOverlay = document.getElementById('introOverlay');
   var introPlayBtn = document.getElementById('introPlayBtn');
+  var introCta = document.getElementById('introCta');
+  var dialogueBox = document.getElementById('dialogueBox');
+  var dialogueSpeaker = document.getElementById('dialogueSpeaker');
+  var dialogueText = document.getElementById('dialogueText');
+  var dialogueNextBtn = document.getElementById('dialogueNextBtn');
+  var welcomeSplash = document.getElementById('welcomeSplash');
+  var portraitBear = document.getElementById('portraitBear');
+  var portraitBee = document.getElementById('portraitBee');
 
   function updateHud(){
     scoreVal.textContent = state.score;
@@ -402,8 +491,8 @@
   renderer.toneMappingExposure = 1.15;
 
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0a0e26);
-  scene.fog = new THREE.Fog(0x0a0e26, 11, 26);
+  scene.background = new THREE.Color(0xaee2f0);
+  scene.fog = new THREE.Fog(0xbfe8d8, 14, 30);
 
   var camera = new THREE.PerspectiveCamera(45, 1.6, 0.1, 100);
   var CAM_GAMEPLAY = new THREE.Vector3(0, 1.55, 9.2);
@@ -411,46 +500,68 @@
   camera.position.copy(CAM_INTRO);
   camera.lookAt(0, 1.2, GOAL_Z);
 
-  scene.add(new THREE.HemisphereLight(0x8fa6ff, 0x0f2a1c, 0.55));
-  var ambient = new THREE.AmbientLight(0x9fb4ff, 0.35);
+  scene.add(new THREE.HemisphereLight(0xcdeeff, 0x3a5a28, 0.75));
+  var ambient = new THREE.AmbientLight(0xfff2d0, 0.4);
   scene.add(ambient);
-  var rim = new THREE.DirectionalLight(0x9fd8ff, 0.55);
-  rim.position.set(-5, 3.5, 6);
+  var sun = new THREE.DirectionalLight(0xfff4d6, 1.35);
+  sun.position.set(-6, 9, 5);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.camera.left = -10; sun.shadow.camera.right = 10;
+  sun.shadow.camera.top = 10; sun.shadow.camera.bottom = -10;
+  scene.add(sun);
+  var rim = new THREE.DirectionalLight(0xcdeeff, 0.4);
+  rim.position.set(5, 3, -4);
   scene.add(rim);
 
-  function makeFloodlight(x){
+  function makeTree(x,z,scale){
     var g = new THREE.Group();
-    var pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,6,8), new THREE.MeshStandardMaterial({color:0x2a2e3a, roughness:.7}));
-    pole.position.y = 3; pole.castShadow = false;
-    g.add(pole);
-    var lamp = new THREE.Mesh(new THREE.SphereGeometry(0.3,12,10), new THREE.MeshStandardMaterial({color:0xffe9a8, emissive:0xffe9a8, emissiveIntensity:1.6, roughness:.4}));
-    lamp.position.y = 6.1;
-    g.add(lamp);
-    var spot = new THREE.SpotLight(0xffe9a8, 2.6, 26, Math.PI/6, 0.5, 1.4);
-    spot.position.set(0,6.1,0);
-    spot.target.position.set(-x*0.5, 0.5, GOAL_Z+1);
-    spot.castShadow = true;
-    spot.shadow.mapSize.set(1024,1024);
-    g.add(spot); g.add(spot.target);
-    g.position.set(x, 0, GOAL_Z-3.5);
+    var trunkMat = new THREE.MeshStandardMaterial({color:0x6b4a30, roughness:.9});
+    var leafMat = new THREE.MeshStandardMaterial({color:0x2f7a3c, roughness:.85});
+    var leafMat2 = new THREE.MeshStandardMaterial({color:0x3a8f47, roughness:.85});
+    var trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.26,2.2,8), trunkMat);
+    trunk.position.y = 1.1; trunk.castShadow = true;
+    g.add(trunk);
+    var c1 = new THREE.Mesh(new THREE.SphereGeometry(1.1,10,8), leafMat); c1.position.set(0,2.7,0); c1.castShadow = true; g.add(c1);
+    var c2 = new THREE.Mesh(new THREE.SphereGeometry(0.8,10,8), leafMat2); c2.position.set(0.7,2.3,0.3); c2.castShadow = true; g.add(c2);
+    var c3 = new THREE.Mesh(new THREE.SphereGeometry(0.75,10,8), leafMat2); c3.position.set(-0.65,2.2,-0.25); c3.castShadow = true; g.add(c3);
+    g.position.set(x,0,z); g.scale.setScalar(scale||1);
     return g;
   }
-  scene.add(makeFloodlight(-8.5));
-  scene.add(makeFloodlight(8.5));
+  var treeSeed = mulberry32(42);
+  for(var ti=0;ti<14;ti++){
+    var ang = (ti/14)*Math.PI*2;
+    var rad = 9.5 + treeSeed()*3.5;
+    var tx = Math.sin(ang)*rad, tz = GOAL_Z-4 + Math.cos(ang)*rad*0.6 - 2;
+    if(Math.abs(tx) < 4.5 && tz > GOAL_Z-2 && tz < KICKER_Z+2) continue;
+    scene.add(makeTree(tx, tz, 0.75+treeSeed()*0.55));
+  }
+  function mulberry32(a){
+    return function(){
+      a|=0; a = a+0x6D2B79F5|0;
+      var t = Math.imul(a^a>>>15, 1|a);
+      t = t+Math.imul(t^t>>>7, 61|t)^t;
+      return ((t^t>>>14)>>>0)/4294967296;
+    };
+  }
 
-  // pitch
+  // meadow ground
   function makePitchTexture(){
     var c = document.createElement('canvas'); c.width=c.height=256;
     var cx = c.getContext('2d');
-    var stripes = 8, sw = c.width/stripes;
-    for(var i=0;i<stripes;i++){
-      cx.fillStyle = i%2===0 ? '#1d5c3f' : '#194f36';
-      cx.fillRect(i*sw,0,sw,c.height);
+    cx.fillStyle = '#4c9a4f'; cx.fillRect(0,0,256,256);
+    var rnd = mulberry32(7);
+    for(var i=0;i<900;i++){
+      var x = rnd()*256, y = rnd()*256;
+      cx.fillStyle = rnd()>0.5 ? 'rgba(70,140,70,.35)' : 'rgba(150,200,110,.3)';
+      cx.fillRect(x, y, 3, 3);
     }
+    cx.fillStyle = 'rgba(255,235,140,.55)';
+    for(var f=0;f<14;f++){ cx.beginPath(); cx.arc(rnd()*256, rnd()*256, 2.2, 0, Math.PI*2); cx.fill(); }
     var tex = new THREE.CanvasTexture(c);
     tex.encoding = THREE.sRGBEncoding;
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(5,8);
+    tex.repeat.set(6,6);
     return tex;
   }
   var pitch = new THREE.Mesh(
@@ -472,7 +583,7 @@
   // grouped so the whole frame can drift as a "moving goal" for difficulty
   var goalGroup = new THREE.Group();
   scene.add(goalGroup);
-  var chalkMat = new THREE.MeshStandardMaterial({color:0xf4f7f1, roughness:.28, metalness:.35});
+  var chalkMat = new THREE.MeshStandardMaterial({color:0x8a5a35, roughness:.85, metalness:.02});
   var postR_ = 0.065;
   var postGeo = new THREE.CylinderGeometry(postR_,postR_,GOAL_H,18);
   var postL = new THREE.Mesh(postGeo, chalkMat); postL.position.set(GOAL_LEFT,GOAL_BOTTOM+GOAL_H/2,GOAL_Z); postL.castShadow=true;
@@ -543,54 +654,30 @@
   var netL = new THREE.Mesh(netSide, netMatSide); netL.position.set(GOAL_LEFT-0.02,GOAL_BOTTOM+GOAL_H/2,GOAL_Z-0.55); netL.rotation.y = Math.PI/2 - 0.55; goalGroup.add(netL);
   var netR = new THREE.Mesh(netSide, netMatSide); netR.position.set(GOAL_RIGHT+0.02,GOAL_BOTTOM+GOAL_H/2,GOAL_Z-0.55); netR.rotation.y = -Math.PI/2 + 0.55; goalGroup.add(netR);
 
-  // stands: instanced crowd dots
-  var crowdColors = [0x2a3060,0x3a4180,0x22284f,0x4a5199];
-  var crowdMat = new THREE.MeshStandardMaterial({ vertexColors:true, roughness:.9 });
-  var crowdGeo = new THREE.BoxGeometry(0.14,0.18,0.1);
-  var CROWD_N = 180;
-  var crowd = new THREE.InstancedMesh(crowdGeo, crowdMat, CROWD_N);
-  var dummy = new THREE.Object3D();
-  var colorArray = new Float32Array(CROWD_N*3);
-  for(var i=0;i<CROWD_N;i++){
-    var row = Math.floor(i/30), col = i%30;
-    var x = -9.5 + col*0.66 + (row%2?0.3:0);
-    var y = 1.4 + row*0.42 + Math.random()*0.1;
-    var z = GOAL_Z - 3.6 - row*0.35;
-    dummy.position.set(x,y,z);
-    dummy.rotation.y = (Math.random()-0.5)*0.3;
-    dummy.updateMatrix();
-    crowd.setMatrixAt(i, dummy.matrix);
-    var col3 = new THREE.Color(crowdColors[Math.floor(Math.random()*crowdColors.length)]);
-    col3.toArray(colorArray, i*3);
-  }
-  crowdGeo.setAttribute('color', new THREE.InstancedBufferAttribute(new Float32Array(0),3));
-  crowd.instanceColor = new THREE.InstancedBufferAttribute(colorArray,3);
-  scene.add(crowd);
-
-  var standBack = new THREE.Mesh(new THREE.BoxGeometry(24,3.6,1), new THREE.MeshStandardMaterial({color:0x0e1230, roughness:.9}));
-  standBack.position.set(0, 1.8, GOAL_Z-5.2);
-  scene.add(standBack);
-
-  function makeBoardTexture(){
-    var c = document.createElement('canvas'); c.width=1024; c.height=96;
+  // rustic wooden signpost carrying the branding, standing at the treeline
+  function makeSignTexture(){
+    var c = document.createElement('canvas'); c.width=512; c.height=192;
     var cx = c.getContext('2d');
-    cx.fillStyle = '#0b0e18'; cx.fillRect(0,0,c.width,c.height);
-    cx.font = "900 60px Arial, sans-serif";
-    cx.fillStyle = '#f4b400';
-    cx.textBaseline = 'middle';
-    var label = '  THAYA GAMES   •   THAYA GAMES   •   THAYA GAMES   •  ';
-    cx.fillText(label, 0, c.height/2 + 2);
+    cx.fillStyle = '#a9784a'; cx.fillRect(0,0,c.width,c.height);
+    cx.strokeStyle = 'rgba(90,58,30,.5)'; cx.lineWidth = 3;
+    for(var i=0;i<6;i++){ cx.beginPath(); cx.moveTo(0,20+i*30); cx.lineTo(512,15+i*30); cx.stroke(); }
+    cx.fillStyle = '#3a2416';
+    cx.font = "900 58px Georgia, serif";
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillText('THAYA GAMES', 256, 100);
     var tex = new THREE.CanvasTexture(c);
     tex.encoding = THREE.sRGBEncoding;
-    tex.wrapS = THREE.RepeatWrapping; tex.repeat.x = 2.4;
     return tex;
   }
-  var board = new THREE.Mesh(
-    new THREE.PlaneGeometry(18, 0.55),
-    new THREE.MeshBasicMaterial({ map:makeBoardTexture() })
-  );
-  board.position.set(0, 0.45, GOAL_Z-3.1);
-  scene.add(board);
+  var signGroup = new THREE.Group();
+  var postMat = new THREE.MeshStandardMaterial({color:0x6b4a30, roughness:.9});
+  var signPostL = new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.1,2.0,8), postMat); signPostL.position.set(-1.9,1.0,0); signPostL.castShadow=true;
+  var signPostR = new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.1,2.0,8), postMat); signPostR.position.set(1.9,1.0,0); signPostR.castShadow=true;
+  var signBoard = new THREE.Mesh(new THREE.BoxGeometry(4.4,1.1,0.1), new THREE.MeshStandardMaterial({map:makeSignTexture(), roughness:.85}));
+  signBoard.position.set(0,1.85,0); signBoard.castShadow = true;
+  signGroup.add(signPostL, signPostR, signBoard);
+  signGroup.position.set(0, 0, GOAL_Z-4.4);
+  scene.add(signGroup);
 
   // ============================= aim plane (raycast target) =============================
   var aimPlane = new THREE.Mesh(
@@ -635,64 +722,52 @@
     var rig = new THREE.Group();
     g.add(rig);
 
-    var skin = new THREE.MeshStandardMaterial({color:0xc9926a, roughness:.75});
-    var shirt = new THREE.MeshStandardMaterial({map:makeKitTexture('#9d5c80','#7a4066','#eef2ea'), roughness:.55});
-    var shorts = new THREE.MeshStandardMaterial({color:0xeef2ea, roughness:.6});
-    var hairMat = new THREE.MeshStandardMaterial({color:0x201712, roughness:.6});
-    var shoe = new THREE.MeshStandardMaterial({color:0x1a1a1a, roughness:.5});
-    var faceMat = new THREE.MeshStandardMaterial({color:0x201712, roughness:.4});
+    var fur = new THREE.MeshStandardMaterial({color:0x7a4f2f, roughness:.85});
+    var furLight = new THREE.MeshStandardMaterial({color:0xc79a63, roughness:.8});
+    var dark = new THREE.MeshStandardMaterial({color:0x201712, roughness:.5});
+    var pawMat = new THREE.MeshStandardMaterial({color:0x3a2a1c, roughness:.7});
 
-    var torso = new THREE.Mesh(new THREE.BoxGeometry(0.46,0.56,0.28), shirt);
-    torso.position.y = 1.11; torso.castShadow = true;
+    var torso = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.56,0.32), fur);
+    torso.position.y = 1.1; torso.castShadow = true;
     rig.add(torso);
+    var belly = new THREE.Mesh(new THREE.SphereGeometry(0.19,12,10), furLight);
+    belly.scale.set(1,1.15,0.55); belly.position.set(0,1.06,0.15);
+    rig.add(belly);
 
-    var head = new THREE.Mesh(new THREE.SphereGeometry(0.185,24,20), skin);
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.205,22,18), fur);
     head.position.y = 1.58; head.castShadow = true;
     rig.add(head);
 
-    var eyeLK = new THREE.Mesh(new THREE.SphereGeometry(0.026,10,8), faceMat); eyeLK.position.set(-0.07,1.60,0.165);
-    var eyeRK = new THREE.Mesh(new THREE.SphereGeometry(0.026,10,8), faceMat); eyeRK.position.set(0.07,1.60,0.165);
+    var earL = new THREE.Mesh(new THREE.SphereGeometry(0.055,10,8), fur); earL.position.set(-0.15,1.75,0.02);
+    var earR = new THREE.Mesh(new THREE.SphereGeometry(0.055,10,8), fur); earR.position.set(0.15,1.75,0.02);
+    rig.add(earL, earR);
+
+    var snout = new THREE.Mesh(new THREE.SphereGeometry(0.1,14,10), furLight);
+    snout.scale.set(0.85,0.75,1); snout.position.set(0,1.535,0.175);
+    rig.add(snout);
+    var nose = new THREE.Mesh(new THREE.SphereGeometry(0.028,8,8), dark);
+    nose.position.set(0,1.565,0.265);
+    rig.add(nose);
+
+    var eyeLK = new THREE.Mesh(new THREE.SphereGeometry(0.024,10,8), dark); eyeLK.position.set(-0.075,1.615,0.185);
+    var eyeRK = new THREE.Mesh(new THREE.SphereGeometry(0.024,10,8), dark); eyeRK.position.set(0.075,1.615,0.185);
     rig.add(eyeLK, eyeRK);
-    var mouthK = new THREE.Mesh(new THREE.TorusGeometry(0.045,0.008,6,10,Math.PI), new THREE.MeshStandardMaterial({color:0x7a4a42}));
-    mouthK.position.set(0,1.535,0.165); mouthK.rotation.z = Math.PI;
-    rig.add(mouthK);
 
-    var hair = new THREE.Mesh(new THREE.SphereGeometry(0.20,20,16,0,Math.PI*2,0,Math.PI*0.62), hairMat);
-    hair.position.y = 1.62; hair.castShadow = true;
-    rig.add(hair);
+    var armGeo = new THREE.CylinderGeometry(0.075,0.066,0.5,12);
+    var armL = limb(armGeo, fur, 1.36); armL.position.x = -0.31; rig.add(armL);
+    var armR = limb(armGeo, fur, 1.36); armR.position.x = 0.31; rig.add(armR);
+    var pawGeoA = new THREE.SphereGeometry(0.075,10,8);
+    var pawAL = new THREE.Mesh(pawGeoA, pawMat); pawAL.scale.set(1,0.7,1); pawAL.position.y = -0.24; armL.children[0].add(pawAL);
+    var pawAR = new THREE.Mesh(pawGeoA, pawMat); pawAR.scale.set(1,0.7,1); pawAR.position.y = -0.24; armR.children[0].add(pawAR);
 
-    var beard = new THREE.Mesh(new THREE.SphereGeometry(0.115,14,10), hairMat);
-    beard.position.set(0,1.49,0.07); beard.scale.set(1,0.8,0.6);
-    rig.add(beard);
+    var legGeo = new THREE.CylinderGeometry(0.095,0.086,0.75,12);
+    var legL = limb(legGeo, fur, 0.8); legL.position.x = -0.14; rig.add(legL);
+    var legR = limb(legGeo, fur, 0.8); legR.position.x = 0.14; rig.add(legR);
 
-    var collar = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.07,0.14), new THREE.MeshStandardMaterial({color:0x7a4066, roughness:.55}));
-    collar.position.set(0,1.39,0.06); collar.rotation.x = -0.25;
-    rig.add(collar);
-
-    var lanyard = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.5,0.02), new THREE.MeshStandardMaterial({color:0x4fd1c0}));
-    lanyard.position.set(0.05,1.15,0.15); lanyard.rotation.z = 0.15;
-    rig.add(lanyard);
-    var badge = new THREE.Mesh(new THREE.BoxGeometry(0.14,0.18,0.015), new THREE.MeshStandardMaterial({color:0xf2f0ea}));
-    badge.position.set(0.09,0.9,0.16); badge.rotation.z = 0.15;
-    rig.add(badge);
-
-    var armGeo = new THREE.CylinderGeometry(0.062,0.056,0.5,12);
-    var cuffMat = new THREE.MeshStandardMaterial({color:0xeef2ea, roughness:.5});
-    var armL = limb(armGeo, shirt, 1.35); armL.position.x = -0.29; rig.add(armL);
-    var armR = limb(armGeo, shirt, 1.35); armR.position.x = 0.29; rig.add(armR);
-    var cuffL = new THREE.Mesh(new THREE.CylinderGeometry(0.064,0.064,0.05,12), cuffMat); cuffL.position.y = -0.06; armL.children[0].add(cuffL);
-    var cuffR = new THREE.Mesh(new THREE.CylinderGeometry(0.064,0.064,0.05,12), cuffMat); cuffR.position.y = -0.06; armR.children[0].add(cuffR);
-
-    var legGeo = new THREE.CylinderGeometry(0.078,0.072,0.77,12);
-    var sockMat = new THREE.MeshStandardMaterial({color:0x7a4066, roughness:.6});
-    var legL = limb(legGeo, shorts, 0.82); legL.position.x = -0.12; rig.add(legL);
-    var legR = limb(legGeo, shorts, 0.82); legR.position.x = 0.12; rig.add(legR);
-    var sockL = new THREE.Mesh(new THREE.CylinderGeometry(0.082,0.082,0.16,12), sockMat); sockL.position.y = -0.3; legL.children[0].add(sockL);
-    var sockR = new THREE.Mesh(new THREE.CylinderGeometry(0.082,0.082,0.16,12), sockMat); sockR.position.y = -0.3; legR.children[0].add(sockR);
-
-    var shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.16,0.09,0.24), shoe); shoeL.position.set(-0.12,0.045,0.05);
-    var shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.16,0.09,0.24), shoe); shoeR.position.set(0.12,0.045,0.05);
-    rig.add(shoeL, shoeR);
+    var pawGeo = new THREE.SphereGeometry(0.1,10,8);
+    var pawL = new THREE.Mesh(pawGeo, pawMat); pawL.scale.set(1,0.55,1.3); pawL.position.set(-0.14,0.05,0.06);
+    var pawR = new THREE.Mesh(pawGeo, pawMat); pawR.scale.set(1,0.55,1.3); pawR.position.set(0.14,0.05,0.06);
+    rig.add(pawL, pawR);
 
     return { group:g, rig:rig, legR:legR, legL:legL, armL:armL, armR:armR };
   }
@@ -702,63 +777,83 @@
     var rig = new THREE.Group();
     g.add(rig);
 
-    var skin = new THREE.MeshStandardMaterial({color:0x57d18f, roughness:.65, emissive:0x0b3a24, emissiveIntensity:.08});
-    var kit = new THREE.MeshStandardMaterial({map:makeKitTexture('#c9e94a','#8fb82e','#171a1e'), roughness:.5});
-    var dark = new THREE.MeshStandardMaterial({color:0x171a1e, roughness:.6});
-    var glove = new THREE.MeshStandardMaterial({color:0x171a1e, roughness:.6});
+    var skin = new THREE.MeshStandardMaterial({color:0x171712, roughness:.55});
+    var yellow = new THREE.MeshStandardMaterial({color:0xf5c22c, roughness:.5});
+    var dark = new THREE.MeshStandardMaterial({color:0x171712, roughness:.6});
+    var glove = new THREE.MeshStandardMaterial({color:0x171712, roughness:.6});
 
-    var torso = new THREE.Mesh(new THREE.BoxGeometry(0.36,0.48,0.24), kit);
-    torso.position.y = 1.08; torso.castShadow = true;
-    rig.add(torso);
+    // striped abdomen: stacked bands read clearly as bee stripes from any angle
+    var bandDefs = [
+      {r:0.165, mat:yellow, z:0.12},
+      {r:0.185, mat:dark,   z:-0.02},
+      {r:0.175, mat:yellow, z:-0.16},
+      {r:0.145, mat:dark,   z:-0.29},
+      {r:0.09,  mat:yellow, z:-0.40}
+    ];
+    bandDefs.forEach(function(b){
+      var band = new THREE.Mesh(new THREE.SphereGeometry(b.r,12,10), b.mat);
+      band.scale.set(1,0.92,0.62);
+      band.position.set(0,1.05,b.z);
+      band.castShadow = true;
+      rig.add(band);
+    });
+    var stinger = new THREE.Mesh(new THREE.ConeGeometry(0.035,0.16,8), dark);
+    stinger.position.set(0,1.03,-0.52); stinger.rotation.x = Math.PI/2;
+    rig.add(stinger);
 
-    var head = new THREE.Mesh(new THREE.SphereGeometry(0.24,24,20), skin);
-    head.position.y = 1.56; head.scale.set(1,1.08,0.96); head.castShadow = true;
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.155,20,16), skin);
+    head.position.set(0,1.14,0.27); head.castShadow = true;
     rig.add(head);
 
-    var mouth = new THREE.Mesh(new THREE.TorusGeometry(0.05,0.009,6,10,Math.PI*0.9), new THREE.MeshStandardMaterial({color:0x0c1116}));
-    mouth.position.set(0,1.475,0.215); mouth.rotation.z = Math.PI*1.05;
-    rig.add(mouth);
-
-    var eyeMat = new THREE.MeshStandardMaterial({color:0x0c1116, roughness:.3});
-    var eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.055,12,10), eyeMat); eyeL.position.set(-0.09,1.58,0.19); eyeL.scale.set(1,1.3,0.6);
-    var eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.055,12,10), eyeMat); eyeR.position.set(0.09,1.58,0.19); eyeR.scale.set(1,1.3,0.6);
+    var eyeMat = new THREE.MeshStandardMaterial({color:0x0c1116, roughness:.25});
+    var eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.062,12,10), eyeMat); eyeL.position.set(-0.1,1.16,0.3); eyeL.scale.set(0.9,1,1);
+    var eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.062,12,10), eyeMat); eyeR.position.set(0.1,1.16,0.3); eyeR.scale.set(0.9,1,1);
     rig.add(eyeL, eyeR);
     var shineMat = new THREE.MeshBasicMaterial({color:0xffffff});
-    var shL = new THREE.Mesh(new THREE.SphereGeometry(0.018,8,8), shineMat); shL.position.set(-0.065,1.615,0.225);
-    var shR = new THREE.Mesh(new THREE.SphereGeometry(0.018,8,8), shineMat); shR.position.set(0.115,1.615,0.225);
+    var shL = new THREE.Mesh(new THREE.SphereGeometry(0.018,8,8), shineMat); shL.position.set(-0.075,1.185,0.35);
+    var shR = new THREE.Mesh(new THREE.SphereGeometry(0.018,8,8), shineMat); shR.position.set(0.125,1.185,0.35);
     rig.add(shL, shR);
+    var smile = new THREE.Mesh(new THREE.TorusGeometry(0.035,0.007,6,10,Math.PI*0.8), new THREE.MeshStandardMaterial({color:0x2a1c0c}));
+    smile.position.set(0,1.09,0.37); smile.rotation.z = Math.PI*1.1;
+    rig.add(smile);
 
     var tearMat = new THREE.MeshStandardMaterial({color:0x6fc8f2, transparent:true, opacity:.9, roughness:.2, metalness:.1});
-    var tearGeo = new THREE.SphereGeometry(0.022,8,8);
-    var tearL = new THREE.Mesh(tearGeo, tearMat); tearL.position.set(-0.09,1.53,0.2); tearL.scale.set(0.7,1.3,0.7); tearL.visible = false;
-    var tearR = new THREE.Mesh(tearGeo, tearMat); tearR.position.set(0.09,1.53,0.2); tearR.scale.set(0.7,1.3,0.7); tearR.visible = false;
+    var tearGeo = new THREE.SphereGeometry(0.02,8,8);
+    var tearL = new THREE.Mesh(tearGeo, tearMat); tearL.position.set(-0.1,1.1,0.31); tearL.scale.set(0.7,1.3,0.7); tearL.visible = false;
+    var tearR = new THREE.Mesh(tearGeo, tearMat); tearR.position.set(0.1,1.1,0.31); tearR.scale.set(0.7,1.3,0.7); tearR.visible = false;
     rig.add(tearL, tearR);
 
-    var antGeo = new THREE.CylinderGeometry(0.014,0.02,0.26,8);
-    var antL = new THREE.Mesh(antGeo, skin); antL.position.set(-0.11,1.86,0); antL.rotation.z = 0.38;
-    var antR = new THREE.Mesh(antGeo, skin); antR.position.set(0.11,1.86,0); antR.rotation.z = -0.38;
+    var antGeo = new THREE.CylinderGeometry(0.012,0.016,0.22,6);
+    var antL = new THREE.Mesh(antGeo, dark); antL.position.set(-0.07,1.29,0.3); antL.rotation.set(0,0,0.3); antL.rotation.x = -0.5;
+    var antR = new THREE.Mesh(antGeo, dark); antR.position.set(0.07,1.29,0.3); antR.rotation.set(0,0,-0.3); antR.rotation.x = -0.5;
     rig.add(antL, antR);
-    var tipGeo = new THREE.SphereGeometry(0.035,10,8);
-    var tipMat = new THREE.MeshStandardMaterial({color:0x9df2c2, emissive:0x2f9468, emissiveIntensity:.6});
-    var tipL = new THREE.Mesh(tipGeo, tipMat); tipL.position.set(-0.2,1.97,0);
-    var tipR = new THREE.Mesh(tipGeo, tipMat); tipR.position.set(0.2,1.97,0);
+    var tipGeo = new THREE.SphereGeometry(0.026,8,8);
+    var tipL = new THREE.Mesh(tipGeo, dark); tipL.position.set(-0.15,1.4,0.42);
+    var tipR = new THREE.Mesh(tipGeo, dark); tipR.position.set(0.15,1.4,0.42);
     rig.add(tipL, tipR);
 
-    var armGeo = new THREE.CylinderGeometry(0.052,0.048,0.4,12);
-    var armL = limb(armGeo, kit, 1.3); armL.position.x = -0.22; rig.add(armL);
-    var armR = limb(armGeo, kit, 1.3); armR.position.x = 0.22; rig.add(armR);
-    var gloveGeo = new THREE.SphereGeometry(0.082,14,12);
-    var gloveL = new THREE.Mesh(gloveGeo, glove); gloveL.position.y = -0.19; armL.children[0].add(gloveL);
-    var gloveR = new THREE.Mesh(gloveGeo, glove); gloveR.position.y = -0.19; armR.children[0].add(gloveR);
-    var thumbGeo = new THREE.SphereGeometry(0.036,10,8);
-    var thumbL = new THREE.Mesh(thumbGeo, glove); thumbL.position.set(0.07,0.02,0.03); gloveL.add(thumbL);
-    var thumbR = new THREE.Mesh(thumbGeo, glove); thumbR.position.set(-0.07,0.02,0.03); gloveR.add(thumbR);
+    // wings — flutter-animated in idleAnim
+    var wingMat = new THREE.MeshStandardMaterial({color:0xf3fbff, transparent:true, opacity:.55, roughness:.3, side:THREE.DoubleSide});
+    var wingGeo = new THREE.SphereGeometry(0.22,10,8);
+    var wingL = new THREE.Mesh(wingGeo, wingMat); wingL.scale.set(0.25,1,0.6); wingL.position.set(-0.16,1.28,-0.02); wingL.rotation.z = 0.5; wingL.rotation.y = 0.3;
+    var wingR = new THREE.Mesh(wingGeo, wingMat); wingR.scale.set(0.25,1,0.6); wingR.position.set(0.16,1.28,-0.02); wingR.rotation.z = -0.5; wingR.rotation.y = -0.3;
+    rig.add(wingL, wingR);
 
-    var legGeo = new THREE.CylinderGeometry(0.068,0.062,0.78,12);
-    var legL = limb(legGeo, dark, 0.78); legL.position.x = -0.1; rig.add(legL);
-    var legR = limb(legGeo, dark, 0.78); legR.position.x = 0.1; rig.add(legR);
+    var armGeo = new THREE.CylinderGeometry(0.034,0.03,0.32,10);
+    var armL = limb(armGeo, dark, 1.08); armL.position.set(-0.15,1.08,0.1); rig.add(armL);
+    var armR = limb(armGeo, dark, 1.08); armR.position.set(0.15,1.08,0.1); rig.add(armR);
+    var gloveGeo = new THREE.SphereGeometry(0.062,12,10);
+    var gloveL = new THREE.Mesh(gloveGeo, glove); gloveL.position.y = -0.16; armL.children[0].add(gloveL);
+    var gloveR = new THREE.Mesh(gloveGeo, glove); gloveR.position.y = -0.16; armR.children[0].add(gloveR);
+    var thumbGeo = new THREE.SphereGeometry(0.028,10,8);
+    var thumbL = new THREE.Mesh(thumbGeo, glove); thumbL.position.set(0.05,0.02,0.02); gloveL.add(thumbL);
+    var thumbR = new THREE.Mesh(thumbGeo, glove); thumbR.position.set(-0.05,0.02,0.02); gloveR.add(thumbR);
 
-    return { group:g, rig:rig, legR:legR, armL:armL, armR:armR, gloveL:gloveL, gloveR:gloveR, tearL:tearL, tearR:tearR };
+    var legGeo = new THREE.CylinderGeometry(0.028,0.024,0.22,8);
+    var legL = limb(legGeo, dark, 0.86); legL.position.set(-0.08,0.86,-0.05); rig.add(legL);
+    var legR = limb(legGeo, dark, 0.86); legR.position.set(0.08,0.86,-0.05); rig.add(legR);
+
+    return { group:g, rig:rig, legR:legR, armL:armL, armR:armR, gloveL:gloveL, gloveR:gloveR, tearL:tearL, tearR:tearR, wingL:wingL, wingR:wingR };
   }
 
   var kicker = buildKicker();
@@ -836,7 +931,10 @@
       keeper.group.position.x = keeperPatrolX;
       keeper.rig.rotation.z = Math.max(-0.22, Math.min(0.22, (patrolTargetX-keeperPatrolX)*0.35));
       keeper.rig.rotation.y = Math.max(-0.3, Math.min(0.3, (patrolTargetX-keeperPatrolX)*0.5));
-      keeper.rig.position.y = Math.abs(Math.sin(now/420)) * 0.018;
+      keeper.rig.position.y = 0.06 + Math.sin(now/230) * 0.05;
+      var flap = Math.sin(now/38);
+      keeper.wingL.rotation.z = 0.5 + flap*0.35;
+      keeper.wingR.rotation.z = -0.5 - flap*0.35;
     }
   }
 
@@ -1189,7 +1287,7 @@
   function randomZone(centerX){
     var hFrac = 0.45 + Math.random()*0.45;
     var h = GOAL_H * hFrac;
-    var area = 0.5 * GOAL_W * GOAL_H;
+    var area = 0.3 * GOAL_W * GOAL_H;
     var w = Math.min(GOAL_W*0.98, area/h);
     var jitter = (Math.random()-0.5) * 0.8;
     var x = (centerX!==undefined ? centerX+jitter-w/2 : GOAL_LEFT+goalOffsetX+Math.random()*(GOAL_W-w));
@@ -1536,7 +1634,7 @@
     var isNewBest = state.score > state.best;
     if(isNewBest){ state.best = state.score; try{ localStorage.setItem(BEST_KEY, String(state.best)); }catch(e){} }
     updateHud();
-    modalFlavor.textContent = 'Mission ' + (state.missionIndex+1) + ' failed — needed ' + missionTarget(state.missionIndex) + ' goals out of ' + missionAttempts(state.missionIndex) + ' shots.';
+    modalFlavor.textContent = 'The bee keeps his honey. Mission ' + (state.missionIndex+1) + ' needed ' + missionTarget(state.missionIndex) + ' goals out of ' + missionAttempts(state.missionIndex) + ' shots.';
     modalQuote.textContent = '“' + INSPIRE_QUOTES[Math.floor(Math.random()*INSPIRE_QUOTES.length)] + '”';
     modalScore.textContent = state.score;
     modalBestWrap.innerHTML = '';
@@ -1625,6 +1723,37 @@
   renderLb();
 
   statusLine.textContent = 'Tap Play to take the spot.';
+
+  setTimeout(function(){ welcomeSplash.classList.add('hide'); }, 2000);
+
+  var DIALOGUE = [
+    { who:'bear', text:'Hey Bee... you wouldn’t happen to have any honey to spare, would you?' },
+    { who:'bee',  text:'Not a drop! Every bit of it is for the hive.' },
+    { who:'bear', text:'Rude. Fine — how about a penalty shootout? Miss twice and I walk off with your honey.' },
+    { who:'bee',  text:'You’re on. Let’s see you get one past me.' }
+  ];
+  var dialogueStep = 0;
+  function showDialogueStep(){
+    var line = DIALOGUE[dialogueStep];
+    dialogueSpeaker.textContent = line.who.toUpperCase();
+    dialogueSpeaker.className = 'dialogue-speaker ' + line.who;
+    dialogueText.textContent = line.text;
+    dialogueNextBtn.textContent = dialogueStep === DIALOGUE.length-1 ? 'Let’s go ▸' : 'Next ▸';
+    portraitBear.style.display = line.who === 'bear' ? 'block' : 'none';
+    portraitBee.style.display = line.who === 'bee' ? 'block' : 'none';
+  }
+  showDialogueStep();
+  dialogueNextBtn.addEventListener('click', function(){
+    ensureAudio();
+    dialogueStep++;
+    if(dialogueStep >= DIALOGUE.length){
+      dialogueBox.classList.add('hide');
+      introCta.classList.add('show');
+    } else {
+      showDialogueStep();
+    }
+  });
+
   introPlayBtn.addEventListener('click', function(){
     ensureAudio(); startMusic();
     state.introActive = false;
