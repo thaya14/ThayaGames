@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Golden Spot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap">
@@ -20,7 +25,9 @@
   }
 
   *{box-sizing:border-box;}
-  body{background:var(--ink);color:var(--paper);}
+  html,body{margin:0;padding:0;}
+  body{background:var(--ink);color:var(--paper);overflow-x:hidden;}
+  img{max-width:100%;}
 
   #app{
     max-width:760px;
@@ -87,6 +94,21 @@
     touch-action:manipulation;
   }
   .stage-wrap canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  @media (max-width:640px){
+    .stage-wrap{ aspect-ratio:3/4; border-radius:16px; }
+    #app{ padding:14px 10px 32px; }
+    .wordmark{ font-size:24px; }
+    .tagline{ font-size:11px; }
+    .topbar{ flex-wrap:wrap; row-gap:10px; }
+    .lb-toggle{ font-size:12px; padding:8px 12px; }
+    .hud{ padding:6px 10px; }
+    .hud-value{ font-size:20px; }
+    .hud-sub{ font-size:9.5px; }
+    .hud-label{ font-size:9px; }
+  }
+  @media (max-width:380px){
+    .stage-wrap{ aspect-ratio:4/5.4; }
+  }
 
   .fx-layer{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:3; }
   .fx-text{
@@ -178,6 +200,9 @@
   .modal-card{ width:min(380px,100%); background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:28px 26px; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.5); }
   .modal-title{ font-family:'Anton',sans-serif; font-size:28px; color:var(--crimson); letter-spacing:.5px; }
   .modal-flavor{ font-size:13px; color:var(--muted); margin:6px 0 18px; }
+  .modal-quote{ font-size:13px; font-style:italic; color:var(--gold-soft); margin:18px 4px 2px; line-height:1.55; }
+  .modal-credit{ font-size:11px; color:var(--muted); margin-top:16px; letter-spacing:.3px; }
+  .modal-credit b{ color:var(--gold-soft); font-weight:800; }
   .modal-score{ font-family:'Anton',sans-serif; font-size:56px; color:var(--gold); line-height:1; font-variant-numeric:tabular-nums; }
   .modal-score-label{ font-size:11px; letter-spacing:2px; color:var(--muted); font-weight:700; margin-bottom:4px; }
   .modal-best{ display:inline-block; margin-top:10px; font-size:12px; font-weight:800; color:#241a00; background:var(--gold); padding:4px 10px; border-radius:999px; letter-spacing:.4px; }
@@ -196,6 +221,8 @@
 
   a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 </style>
+</head>
+<body>
 
 <div id="app">
   <div class="topbar">
@@ -253,10 +280,12 @@
     <div class="modal-score" id="modalScore">0</div>
     <div id="modalBestWrap"></div>
     <div id="modalNameWrap"></div>
+    <p class="modal-quote" id="modalQuote"></p>
     <div class="modal-actions">
       <button class="btn btn-ghost" id="modalLbBtn" type="button">View Leaderboard</button>
       <button class="btn btn-primary" id="modalRetryBtn" type="button">Try Again</button>
     </div>
+    <p class="modal-credit">Built by <b>Blessing Thaya</b></p>
   </div>
 </div>
 
@@ -296,6 +325,7 @@
   var modal = document.getElementById('modal');
   var modalScore = document.getElementById('modalScore');
   var modalFlavor = document.getElementById('modalFlavor');
+  var modalQuote = document.getElementById('modalQuote');
   var modalBestWrap = document.getElementById('modalBestWrap');
   var modalNameWrap = document.getElementById('modalNameWrap');
   var modalRetryBtn = document.getElementById('modalRetryBtn');
@@ -772,6 +802,43 @@
     }
   }
 
+  var CAM_BASE = camera.position.clone();
+  var shakeMag = 0;
+  function shakeCamera(mag, ms){
+    shakeMag = mag;
+    addTween(ms, function(p){
+      var falloff = 1-p;
+      camera.position.set(
+        CAM_BASE.x + (Math.random()-0.5)*shakeMag*falloff,
+        CAM_BASE.y + (Math.random()-0.5)*shakeMag*falloff,
+        CAM_BASE.z + (Math.random()-0.5)*shakeMag*falloff*0.5
+      );
+    }, function(){ camera.position.copy(CAM_BASE); });
+  }
+
+  var particlePool = [];
+  function spawnImpactBurst(pos, color){
+    var n = 10;
+    for(var i=0;i<n;i++){
+      var mat = new THREE.MeshBasicMaterial({ color: color||0xf4f7f1, transparent:true });
+      var p = new THREE.Mesh(new THREE.SphereGeometry(0.028,6,6), mat);
+      p.position.copy(pos);
+      scene.add(p);
+      var ang = Math.random()*Math.PI*2;
+      var speed = 1.4 + Math.random()*1.6;
+      var vel = { x: Math.cos(ang)*speed, y: 0.6+Math.random()*1.6, z: (Math.random()-0.5)*speed };
+      var start = pos.clone();
+      addTween(420+Math.random()*180, function(prog){
+        var e = 1-Math.pow(1-prog,2);
+        p.position.x = start.x + vel.x*e*0.35;
+        p.position.y = start.y + vel.y*e*0.35 - 1.6*e*e;
+        p.position.z = start.z + vel.z*e*0.35;
+        p.scale.setScalar(1-prog);
+        mat.opacity = 1-prog;
+      }, function(){ scene.remove(p); p.geometry.dispose(); mat.dispose(); });
+    }
+  }
+
   function mainLoop(now){
     tickTweens(now);
     idleAnim(now);
@@ -1177,14 +1244,26 @@
       var gloveTarget = new THREE.Vector3();
       addTween(220, function(p){
         var e = easeOutQuad(p);
-        keeper.armL.rotation.z = farArmL + (reachLeft ? 0.75 : 0.45) * e;
-        keeper.armR.rotation.z = farArmR - (reachLeft ? 0.45 : 0.75) * e;
-        keeper.rig.rotation.x = -0.18 * e;
+        keeper.armL.rotation.z = farArmL + (reachLeft ? 0.95 : 0.6) * e;
+        keeper.armR.rotation.z = farArmR - (reachLeft ? 0.6 : 0.95) * e;
+        keeper.armL.rotation.x = -0.35 * e;
+        keeper.armR.rotation.x = -0.35 * e;
+        keeper.rig.rotation.x = -0.22 * e;
+        keeper.rig.position.y = -0.05 * e;
         catchGlove.getWorldPosition(gloveTarget);
         ball.position.lerpVectors(ballStart, gloveTarget, e);
       }, function(){
         ball.followObj = catchGlove;
-        addTween(260, function(p){ keeper.rig.position.y = Math.sin(p*Math.PI)*0.06; });
+        shakeCamera(0.05, 220);
+        spawnImpactBurst(gloveTarget, 0xffe9a8);
+        var bScale = ball.scale.clone();
+        addTween(300, function(p){
+          var squash = 1 - Math.sin(p*Math.PI)*0.4;
+          ball.scale.set(squash, 2-squash, squash);
+        }, function(){ ball.scale.copy(bScale); });
+        addTween(280, function(p){
+          keeper.rig.position.y = -0.05 + Math.sin(p*Math.PI)*0.09;
+        }, function(){ keeper.rig.position.y = 0; });
       });
       state.missionMisses += 1; state.combo = 0; updateHud();
       showFxText('SAVED!', 'save');
@@ -1322,6 +1401,14 @@
 
   // ============================= game over / leaderboard =============================
   var db = null, top10 = [];
+  var INSPIRE_QUOTES = [
+    'Every great striker missed a hundred before they made the one that mattered.',
+    'The scoreboard resets. What you learned from that miss doesn’t.',
+    'Pressure is just proof you showed up for something worth trying.',
+    'Champions aren’t built in comfort — they’re built one more shot at a time.',
+    'A missed shot is only the end of the story if you stop writing.',
+    'The keeper guesses. The striker who keeps stepping up eventually guesses right.'
+  ];
   function qualifies(score){
     if(!db || score<=0) return false;
     if(top10.length < 10) return true;
@@ -1334,6 +1421,7 @@
     if(isNewBest){ state.best = state.score; try{ localStorage.setItem(BEST_KEY, String(state.best)); }catch(e){} }
     updateHud();
     modalFlavor.textContent = 'Mission ' + (state.missionIndex+1) + ' failed — needed ' + missionTarget(state.missionIndex) + ' goals out of ' + missionAttempts(state.missionIndex) + ' shots.';
+    modalQuote.textContent = '“' + INSPIRE_QUOTES[Math.floor(Math.random()*INSPIRE_QUOTES.length)] + '”';
     modalScore.textContent = state.score;
     modalBestWrap.innerHTML = '';
     if(isNewBest && state.score>0){
@@ -1415,3 +1503,5 @@
   setTimeout(function(){ startRound(); }, 500);
 })();
 </script>
+</body>
+</html>
