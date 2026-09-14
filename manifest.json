@@ -1,0 +1,17 @@
+{
+  "name": "Golden Spot",
+  "short_name": "Golden Spot",
+  "description": "Golden Spot is a 3D penalty shootout set in a sunlit forest — a mischievous bear takes on a honey-guarding bee in goal. Beat rising missions, dodge a keeper who never stands still, and climb the online leaderboard.",
+  "start_url": "/ThayaGames/",
+  "scope": "/ThayaGames/",
+  "id": "/ThayaGames/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0d12",
+  "theme_color": "#f4b400",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
