@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Golden Spot</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f4b400">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1725,6 +1729,12 @@
   statusLine.textContent = 'Tap Play to take the spot.';
 
   setTimeout(function(){ welcomeSplash.classList.add('hide'); }, 2000);
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
 
   var DIALOGUE = [
     { who:'bear', text:'Hey Bee... you wouldn’t happen to have any honey to spare, would you?' },
