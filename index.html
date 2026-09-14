@@ -158,6 +158,23 @@
   }
   .timer-bar.urgent{ background:linear-gradient(90deg,#ff9a6a,var(--crimson)); }
 
+  .intro-overlay{
+    position:absolute; inset:0; z-index:6; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(180deg, rgba(6,8,14,.35) 0%, rgba(6,8,14,.75) 65%, rgba(6,8,14,.92) 100%);
+    text-align:center; padding:24px; opacity:1; transition:opacity .5s ease;
+  }
+  .intro-overlay.hide{ opacity:0; pointer-events:none; }
+  .intro-inner{ max-width:90%; }
+  .intro-wordmark{
+    font-family:'Anton',sans-serif; font-size:clamp(30px,8vw,52px); color:var(--gold);
+    letter-spacing:1px; text-shadow:0 4px 22px rgba(244,180,0,.4);
+    animation:introPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes introPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
+  .intro-sub{ color:var(--paper); font-size:13px; opacity:.85; margin:10px auto 22px; max-width:360px; line-height:1.5; }
+  .intro-play{ font-size:16px; padding:13px 30px; box-shadow:0 10px 30px -8px rgba(244,180,0,.6); }
+  @media (prefers-reduced-motion:reduce){ .intro-wordmark{ animation:none; } }
+
   .status{
     min-height:20px; text-align:center; margin:14px 0 0; font-size:14px; color:var(--muted); font-weight:600;
   }
@@ -257,6 +274,14 @@
       <div class="pips"><span class="pip" id="pip1"></span><span class="pip" id="pip2"></span></div>
     </div>
     <div class="timer-wrap"><div class="timer-bar" id="timerBar"></div></div>
+
+    <div class="intro-overlay" id="introOverlay">
+      <div class="intro-inner">
+        <div class="intro-wordmark">GOLDEN SPOT</div>
+        <p class="intro-sub">One shooter. One keeper who never stands still. Three seconds to decide.</p>
+        <button class="btn btn-primary intro-play" id="introPlayBtn" type="button">▶ Play</button>
+      </div>
+    </div>
   </div>
 
   <p class="status" id="statusLine">Loading the pitch…</p>
@@ -307,7 +332,7 @@
   }
   function missionAttempts(i){ return missionTarget(i) + MISS_ALLOWANCE; }
 
-  var state = { score:0, combo:0, missionGoals:0, missionMisses:0, best:0, missionIndex:0, shooting:false, gameOver:false };
+  var state = { score:0, combo:0, missionGoals:0, missionMisses:0, best:0, missionIndex:0, shooting:false, gameOver:false, introActive:true };
   try { state.best = parseInt(localStorage.getItem(BEST_KEY),10) || 0; } catch(e){ state.best = 0; }
 
   // ============================= DOM refs =============================
@@ -337,6 +362,8 @@
   var lbOpenBtn = document.getElementById('lbOpenBtn');
   var lbCloseBtn = document.getElementById('lbCloseBtn');
   var muteBtn = document.getElementById('muteBtn');
+  var introOverlay = document.getElementById('introOverlay');
+  var introPlayBtn = document.getElementById('introPlayBtn');
 
   function updateHud(){
     scoreVal.textContent = state.score;
@@ -377,8 +404,10 @@
   scene.fog = new THREE.Fog(0x0a0e26, 11, 26);
 
   var camera = new THREE.PerspectiveCamera(45, 1.6, 0.1, 100);
-  camera.position.set(0, 1.55, 9.2);
-  camera.lookAt(0, 1.3, GOAL_Z);
+  var CAM_GAMEPLAY = new THREE.Vector3(0, 1.55, 9.2);
+  var CAM_INTRO = new THREE.Vector3(0, 4.4, 13.5);
+  camera.position.copy(CAM_INTRO);
+  camera.lookAt(0, 1.2, GOAL_Z);
 
   scene.add(new THREE.HemisphereLight(0x8fa6ff, 0x0f2a1c, 0.55));
   var ambient = new THREE.AmbientLight(0x9fb4ff, 0.35);
@@ -802,7 +831,7 @@
     }
   }
 
-  var CAM_BASE = camera.position.clone();
+  var CAM_BASE = CAM_GAMEPLAY;
   var shakeMag = 0;
   function shakeCamera(mag, ms){
     shakeMag = mag;
@@ -839,9 +868,18 @@
     }
   }
 
+  function introDrift(now){
+    if(!state.introActive) return;
+    camera.position.x = Math.sin(now/5000) * 2.1;
+    camera.position.y = CAM_INTRO.y + Math.sin(now/3600) * 0.25;
+    camera.position.z = CAM_INTRO.z;
+    camera.lookAt(0, 1.2, GOAL_Z);
+  }
+
   function mainLoop(now){
     tickTweens(now);
     idleAnim(now);
+    introDrift(now);
     updateBallFollow();
     renderer.render(scene, camera);
     requestAnimationFrame(mainLoop);
@@ -1476,7 +1514,15 @@
   }
   function saveScore(name,score){
     if(!db) return Promise.reject(new Error('no db'));
-    return db.collection('leaderboard').add({ name:name, score:score, createdAt: Date.now() });
+    return db.collection('leaderboard').add({ name:name, score:score, createdAt: Date.now() })
+      .then(function(ref){ pruneLeaderboard(); return ref; });
+  }
+  function pruneLeaderboard(){
+    if(!db) return;
+    db.collection('leaderboard').orderBy('score','desc').limit(50).get().then(function(snap){
+      if(snap.docs.length <= 10) return;
+      snap.docs.slice(10).forEach(function(d){ d.ref.delete().catch(function(){}); });
+    }).catch(function(){});
   }
   function initDb(){
     try{
@@ -1500,7 +1546,22 @@
   initDb();
   renderLb();
 
-  setTimeout(function(){ startRound(); }, 500);
+  statusLine.textContent = 'Tap Play to take the spot.';
+  introPlayBtn.addEventListener('click', function(){
+    ensureAudio(); startMusic();
+    state.introActive = false;
+    introOverlay.classList.add('hide');
+    var from = camera.position.clone();
+    addTween(900, function(p){
+      var e = easeOutQuad(p);
+      camera.position.lerpVectors(from, CAM_GAMEPLAY, e);
+      camera.lookAt(0, 1.3, GOAL_Z);
+    }, function(){
+      camera.position.copy(CAM_GAMEPLAY);
+      camera.lookAt(0, 1.3, GOAL_Z);
+      startRound();
+    });
+  });
 })();
 </script>
 </body>
